@@ -8,9 +8,14 @@
     <div class="col-md-8">  
       <div class="well">
         <p class="lead"><a href="#newModal" class="btn btn-default pull-right" data-toggle="modal"><span class="glyphicon glyphicon-plus-sign"></span> new menu item</a> Menu:</p>
-        <div class="dd" id="nestable">
-          {!!$menu!!}
+        <input type="hidden" id="id">
+        <div class="cf nestable-lists">
+          <div class="dd" id="nestable">
+            {!!$menu!!}
+          </div>
         </div>
+        <p></p>
+        <input type="hidden" id="nestable-output">
         <p id="success-indicator" style="display:none; margin-right: 10px;">
           <span class="glyphicon glyphicon-ok"></span> Menu order has been saved
         </p>

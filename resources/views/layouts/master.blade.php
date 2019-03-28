@@ -10,7 +10,8 @@
   <meta name="viewport" content="width=device-width">
   {{-- <link href="{{asset('css/app.css')}}" rel="stylesheet"> --}}
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-  <link href="{{asset('css/style.css') }}" rel="stylesheet">
+  {{-- <link href="{{asset('css/style.css') }}" rel="stylesheet"> --}}
+  <link href="{{asset('css/nestphp.css') }}" rel="stylesheet">
   <link href="{{ asset('assets/selectize/css/selectize.bootstrap3.css') }}" rel="stylesheet">
   @stack('css')
 </head>

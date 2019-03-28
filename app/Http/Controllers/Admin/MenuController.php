@@ -14,7 +14,8 @@ class MenuController extends Controller
 	{
 		$items 	= Menu::orderBy('order')->get();
 		$menu 	= new Menu;
-		$menu   = $menu->getHTML($items);
+		// $menu   = $menu->getHTML($items);
+		$menu   = $menu->renderHTML($items);
 		return view('admin.menu.builder',compact('items','menu'));
 		// $this->layout->content = View::make('admin.menu.builder', array('items'=>$items,'menu'=>$menu));
 	}
@@ -44,7 +45,7 @@ class MenuController extends Controller
     $destination  = e(Input::get('destination',0));
     $item             = Menu::find($source);
     $item->parent_id  = $destination;
-    
+
     $item->save();    
     $ordering       = json_decode(Input::get('order'));
     $rootOrdering   = json_decode(Input::get('rootOrder'));
