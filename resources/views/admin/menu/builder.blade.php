@@ -6,20 +6,25 @@
 @section('content')
   <div class="row">
     <div class="col-md-8">  
-      <div class="well">
-        <p class="lead"><a href="#newModal" class="btn btn-default pull-right" data-toggle="modal"><span class="glyphicon glyphicon-plus-sign"></span> new menu item</a> Menu:</p>
-        <input type="hidden" id="id">
-        <div class="cf nestable-lists">
-          <div class="dd" id="nestable">
-            {!!$menu!!}
-          </div>
+      <div class="panel panel-primary">
+        <div class="panel-heading">
+          <button type="button" class="btn btn-default btn-sm pull-right" data-toggle="modal" data-target="#newModal"><span class="glyphicon glyphicon-plus-sign"></span>new menu item</button>
+          <span><h5>Menu Builder</h5></span>
         </div>
-        <p></p>
-        <input type="hidden" id="nestable-output">
-        <p id="success-indicator" style="display:none; margin-right: 10px;">
-          <span class="glyphicon glyphicon-ok"></span> Menu order has been saved
-        </p>
-      </div>
+        <div class="panel-body">
+            <input type="hidden" id="id">
+            <div class="cf nestable-lists">
+              <div class="dd" id="nestable">
+                {!!$menu!!}
+              </div>
+            </div>
+            <p></p>
+            <input type="hidden" id="nestable-output">
+            <p id="success-indicator" style="display:none; margin-right: 10px;">
+              <span class="glyphicon glyphicon-ok"></span> Menu order has been saved
+            </p>          
+        </div>
+      </div>      
     </div>
     <div class="col-md-4">
       <div class="well">
@@ -92,7 +97,13 @@
 @push('js')
   <script src="{{ asset('assets/nestable/jquery.nestable.js') }}"></script> 
   <script type="text/javascript">
-  $(function() {
+    $(function() {
+      $.ajaxSetup({
+        headers: {
+          'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+      });
+
       $('.dd').nestable({ 
         dropCallback: function(details) {       
            var order = new Array();

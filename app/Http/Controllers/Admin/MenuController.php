@@ -14,17 +14,14 @@ class MenuController extends Controller
 	{
 		$items 	= Menu::orderBy('order')->get();
 		$menu 	= new Menu;
-		// $menu   = $menu->getHTML($items);
-		$menu   = $menu->renderHTML($items);
+		$menu   = $menu->getHTML($items);
 		return view('admin.menu.builder',compact('items','menu'));
-		// $this->layout->content = View::make('admin.menu.builder', array('items'=>$items,'menu'=>$menu));
 	}
 
 	public function getEdit($id)
 	{
 		$item = Menu::find($id);
-		return view('admin.menu.builder',compact('items','menu',compact('item')));
-		// $this->layout->content = View::make('admin.menu.edit', array('item'=>$item));
+		return view('admin.menu.edit',compact('item'));
 	}
 
 	public function postEdit($id)
@@ -34,8 +31,8 @@ class MenuController extends Controller
 		$item->label 	= e(Input::get('label',''));
 		$item->url 		= e(Input::get('url',''));
 		$item->save();
-		return redirect('admin/menu/edit',$id);
-		// return Redirect::to("admin/menu/edit/{$id}");
+		// return redirect('admin/menu/edit',$id);
+		return Redirect::to("admin/menu/edit/{$id}");
 	}
 
 	// AJAX Reordering function

@@ -1,3 +1,9 @@
+@extends('layouts.master')
+
+{{-- @push('css')
+  <link rel="stylesheet" href="{{asset('assets/nestable/nestable.css')}}">
+@endpush --}}
+
 @section('content')
   <div class="row">
     <div class="col-md-8">  
@@ -25,7 +31,7 @@
 		</div>
 		<div class="form-group">
 		    <div class="col-md-6 col-md-offset-6 text-right">
-		      <button type="submit" class="btn btn-lg btn-default">Update item</button>
+		      <button type="submit" class="btn btn-sm btn-warning">Update item</button>
 		    </div>
 		</div>
 		{{ Form::close()}}
@@ -33,5 +39,9 @@
     </div>
     
   </div>
-@stop
+@endsection
+
+{{-- @push('js')
+  <script src="{{ asset('assets/nestable/jquery.nestable.js') }}"></script> 
+@endpush   --}}
 
