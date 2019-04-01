@@ -15,4 +15,9 @@ class Category extends Model
 	{
 	    return $this->morphMany('Seo', 'seoble');
 	}
+
+	public function childs()
+	{
+		return $this->hasMany('App\SubCategories','category_id','id') ;
+	}
 }

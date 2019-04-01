@@ -8,6 +8,9 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
+Route::get('product','Admin\ProductController@index')->name('product.index');
+Route::get('product/{category}/create','Admin\ProductController@create')->name('product.create');
+
 // Route::resource('admin/seo', 'AdminSeoController');
 //
 // // Routes for the menu admin
