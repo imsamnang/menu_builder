@@ -6,16 +6,24 @@
 	<link rel="shortcut icon" href="{{asset('assets/img/favicon.ico')}}">
 	<link href="https://fonts.googleapis.com/css?family=Hanuman" rel="stylesheet">
 	<title>Select a Category</title>
+	<script src="{{asset('assets/js/jquery-3.3.1.min.js')}}"></script>
+	<script src="{{asset('assets/js/main.js')}}"></script>
+	<script src="{{asset('assets/js/popper.min.js')}}"></script>
 	<link rel="stylesheet" href="{{asset('assets/css/bootstrap.min.css')}}">
+	<script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
 	<link rel="stylesheet" href="{{asset('assets/css/main.css')}}">
 	<link rel="stylesheet" href="{{asset('assets/css/style.css')}}">
 	<link rel="stylesheet" href="https://unpkg.com/ionicons@4.3.0/dist/css/ionicons.min.css">
 	<link rel="stylesheet" href="{{asset('assets/css/post.css')}}">
+	<script src="{{asset('assets/js/plupload.full.min.js')}}"></script>
+	<script src="{{asset('assets/js/jquery.chained.js')}}"></script>
+	<script src="{{asset('assets/js/jquery.validate.min.js')}}"></script>	
 	<style type="text/css">
 		body {
 			min-width: 1090px;
 		}
 	</style>
+	@stack('css')
 </head>
 <body>
 
@@ -208,34 +216,14 @@
 	</div>
 
 
-	<script src="{{asset('assets/js/jquery-3.3.1.min.js')}}"></script>
+{{-- 	<script src="{{asset('assets/js/jquery-3.3.1.min.js')}}"></script>
 	<script src="{{asset('assets/js/bootstrap.min.js')}}"></script>
 	<script src="{{asset('assets/js/main.js')}}"></script>
 	<script src="{{asset('assets/js/popper.min.js')}}"></script>
 	<script src="{{asset('assets/js/plupload.full.min.js')}}"></script>
 	<script src="{{asset('assets/js/jquery.chained.js')}}"></script>
-	<script src="{{asset('assets/js/jquery.validate.min.js')}}"></script>
+	<script src="{{asset('assets/js/jquery.validate.min.js')}}"></script> --}}
 
-	<script>
-		$(document).ready(function(e) {
-			function do_setMaxH() {
-				if($(document).width()>=720) {
-					$('.sub_cat ul').css('max-height', $('.main_cat ul').height());
-				} else {
-					$('.sub_cat ul').removeAttr('style');
-				}
-			}
-			do_setMaxH();
-			$(window).resize(function() {
-				do_setMaxH();
-			})			
-	   	$('body').on('click mouseover', '.btn_main_cat', function(event){
-				event.preventDefault();
-				$('.main_cat li').removeClass('active');
-				$(this).parent().addClass('active');
-			});
-
-	    });
-	</script>
+	@stack('js')
 </body>
 </html>

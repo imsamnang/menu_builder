@@ -2,186 +2,6 @@
 
 @section('content')
 
-{{-- google map --}}
-	<script type="text/javascript">
-		$(document).ready(function () {
-			var marker;
-			var map;
-			var geocoder;
-			var map_loading = $('#map_loading').show();
-			var x=12.5;
-			var y=104.9806145;
-			var z=7;
-			var is_has_old_map = 0;
-
-			if(is_has_old_map==1) {
-				z=15;
-			}
-
-			function loadMap() {
-				if(x && y) {
-	        // Define the latitude and longitude positions
-	        latitude = parseFloat(x);
-	        longitude = parseFloat(y);
-	        latlngPos = new google.maps.LatLng(latitude, longitude);
-	        // Set up options for the Google map
-	        var myOptions = {
-	        	zoom: z,
-	        	center: latlngPos,
-	        	mapTypeId: google.maps.MapTypeId.ROADMAP,
-	        	fullscreenControl: false,
-	        	streetViewControl: false
-	        };
-	        // Define the map
-	        map = new google.maps.Map(document.getElementById("map"), myOptions);
-	        // geocoder = new google.maps.Geocoder;
-	        // for move map
-	        google.maps.event.addListener(map,'mouseout',function() {
-	        	window.setTimeout(function() {
-	        	},100);
-	        });
-	        // set maker by click
-	        google.maps.event.addListener(map, 'dragend', function(e) {
-	        	$('#map_lat').val(map.getCenter().lat());
-	        	$('#map_lng').val(map.getCenter().lng());
-	          });
-	            // for move map
-	        google.maps.event.addDomListener(window, "resize", function() {
-	            // 3 seconds after the center of the map has changed, pan back to the marker
-	            window.setTimeout(function() {
-	            },100);
-	        });
-	          map_loading.hide();
-	          is_has_old_map = 1;
-	      }
-
-	      $('<div/>').addClass('centerMarker').appendTo(map.getDiv())
-	         .click(function(){
-	         	var that=$(this);
-	         	if(!that.data('win')){
-	         		that.data('win',new google.maps.InfoWindow({content:'this is the center'}));
-	         		that.data('win').bindTo('position',map,'center');
-	         	}
-	         	that.data('win').open(map);
-	         });
-	     	}
-
-		 		loadMap();
-
-	      if(is_has_old_map==1) {
-	      	google.maps.event.addDomListener(window, 'load', loadMap);
-	      }
-
-	      $('#find_location').click(function(e){
-	      	e.preventDefault();
-	      	map_loading.show();
-
-	      	var pos = {
-	      		lat: x,
-	      		lng: y
-	      	};
-	        // Try HTML5 geolocation.
-	        if (navigator.geolocation) {
-	        	navigator.geolocation.getCurrentPosition(function(position) {
-	        		pos = {
-	        			lat: position.coords.latitude,
-	        			lng: position.coords.longitude
-	        		};
-	        		map.setCenter(pos);
-	        		map.setZoom(12);
-	        		map_loading.hide();
-	        	}, function() {
-	        		map.setCenter(pos);
-	        		map.setZoom(12);
-	        		map_loading.hide();
-	        	});
-	        } else {
-	          // Browser doesn't support Geolocation
-	          map.setCenter(pos);
-	          map.setZoom(12);
-
-	          map_loading.hide();
-	      	}
-	      });
-	  });
-	</script>
-
-	<script>
-	  $(document).ready(function() {
-			jQuery.validator.addMethod("phone", function(value, element) {
-				if((value.charAt(0)==0 && value.charAt(1)!=0) || value.length==0 ){
-					return true;
-				}
-				return false;
-			}, "Invalid phone number.");
-	    // Validate
-	    $("#form-post").validate({	        
-	    	rules:
-	    	{
-	    		ad_headline:{required:true, maxlength:101},
-	    		ad_text:{required:true, maxlength:10000},
-	    		name:{required:true, minlength:3, maxlength:50},
-	    		'phone-1':{required:true, minlength:9, maxlength:10,number: true,phone:true},
-	    		'phone-2':{minlength:9, maxlength:10,number: true,phone:true},
-	    		'phone-3':{minlength:9, maxlength:10,number: true,phone:true},
-	    		ad_kindof:{required:true},
-	    	},
-	    	errorClass:"error invalid-feedback",			
-	    	highlight: function(label) {
-	    		$(label).addClass('error');
-	    		$(label).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback')
-	    		$(label).closest('.form-group').find('label.error').remove();
-	    		$(label).closest('.form-group input').after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span><span id="inputError2Status" class="sr-only">(error)</span>');
-	    	},
-
-	    	success: function(label,element) {
-	    		$(label).removeClass('error');
-	    		$(element).removeClass('is-invalid');
-	    		$(label).closest('.form-group').removeClass('has-error has-feedback').addClass('has-success has-feedback');
-	    		$(label).closest('.form-group').find('label.error').remove();
-	    		label.after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span><span id="inputSuccess2Status" class="sr-only">(success)</span>');
-	    		label.remove();
-	    		$('.has-success').find('.checkbox').css('margin-bottom','0');
-	    	},
-
-	    	errorPlacement: function(error, element) {
-	    		if(error.text()) {
-	    			element.addClass('is-invalid');
-	    			element.closest('.form-input').append(error);
-	    		}
-	    	},  
-			// focusInvalid: false,
-			invalidHandler: function(form, validator) {
-				if (!validator.numberOfInvalids())
-					return;
-
-				$('html, body').animate({
-					scrollTop: $(validator.errorList[0].element).offset().top
-				}, 700);
-			},
-			submitHandler: function(form) {
-					
-					$("#form-post input[type='submit']").attr('disabled','disabled').val('Saving...').css({"background-color": "#dedede", "border": "none" });
-					
-					$.post($("#form-post").attr('action'), $("#form-post").serialize(), function(data) {
-						if(data.status == 1 || data.status == '1') {
-							if(data.is_logged_in == 1 || data.is_logged_in == '1') {
-								window.location = 'https://www.khmer24.com/en/manage-ads.html'; 
-							} else {
-								$('#account-question').modal('show');
-								// $.fancybox('#account-question',{autoSize : true, width: '100%', height:'100%',padding:0, margin:0, modal:true });
-		              //  window.location = 'https://www.khmer24.com/en/register.html'; 
-		          }
-		      }else{
-		      	$("#form-post input[type='submit']").removeAttr('disabled').val('Submit').removeAttr('style');
-		      	alert(data.info);
-		      }
-		  },'json');
-				}
-			});		
-		});
-	</script>
-
 	<div class="post_form bg-white rounded border my_content">
 		<div class="header p-3">
 			<h1 class="title">POST FREE AD</h1>
@@ -460,10 +280,222 @@
 				</div>
 			</div>
 		</div>
+		
 	</div>
 
 	<input type="hidden" value="https://www.khmer24.com/" id="base_url" />
 	<input type="hidden" value="https://www.khmer24.com/khmer24-reform21/template/" id="template_path" />
+
+	<div class="modal fade" id="account-question" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+			<div class="modal-dialog" role="document">
+				<div class="modal-content">
+					<div class="account-question-box">
+						<div class="title-head">
+							<div class="text">Please! register or login to publish your ad</div>
+							<div class="icon">
+							<span class="user-photo" style="background: url('https://www.khmer24.com/khmer24-reform21/template/img/default_profile.jpg') no-repeat center; background-size: cover;"></span>
+							</div>
+							<button class="btn btn-clear btn-close-modal"><span class="icon icon-cross"></span></button>
+						</div>
+						<div class="detail-box">
+							<div>
+								<div class="info">Already have an account?</div>
+								<a class="btn btn_blue btn-primary btn-md" href="https://www.khmer24.com/en/login">Log in</a>
+							</div>
+							<div class="devide">
+								<span>Or</span>
+							</div>
+							<div>
+								<div class="info">No account yet?</div>
+								<a class="btn btn-warning btn-yellow_dark btn-md" href="https://www.khmer24.com/en/register">Register</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+	</div>
+
+	<a href="#totop" id="totop"><i class="icon-up"></i></a>
+
+{{-- google map --}}
+	<script type="text/javascript">
+		$(document).ready(function () {
+			var marker;
+			var map;
+			var geocoder;
+			var map_loading = $('#map_loading').show();
+			var x=12.5;
+			var y=104.9806145;
+			var z=7;
+			var is_has_old_map = 0;
+
+			if(is_has_old_map==1) {
+				z=15;
+			}
+
+			function loadMap() {
+				if(x && y) {
+	        // Define the latitude and longitude positions
+	        latitude = parseFloat(x);
+	        longitude = parseFloat(y);
+	        latlngPos = new google.maps.LatLng(latitude, longitude);
+	        // Set up options for the Google map
+	        var myOptions = {
+	        	zoom: z,
+	        	center: latlngPos,
+	        	mapTypeId: google.maps.MapTypeId.ROADMAP,
+	        	fullscreenControl: false,
+	        	streetViewControl: false
+	        };
+	        // Define the map
+	        map = new google.maps.Map(document.getElementById("map"), myOptions);
+	        // geocoder = new google.maps.Geocoder;
+	        // for move map
+	        google.maps.event.addListener(map,'mouseout',function() {
+	        	window.setTimeout(function() {
+	        	},100);
+	        });
+	        // set maker by click
+	        google.maps.event.addListener(map, 'dragend', function(e) {
+	        	$('#map_lat').val(map.getCenter().lat());
+	        	$('#map_lng').val(map.getCenter().lng());
+	          });
+	            // for move map
+	        google.maps.event.addDomListener(window, "resize", function() {
+	            // 3 seconds after the center of the map has changed, pan back to the marker
+	            window.setTimeout(function() {
+	            },100);
+	        });
+	          map_loading.hide();
+	          is_has_old_map = 1;
+	      }
+
+	      $('<div/>').addClass('centerMarker').appendTo(map.getDiv())
+	         .click(function(){
+	         	var that=$(this);
+	         	if(!that.data('win')){
+	         		that.data('win',new google.maps.InfoWindow({content:'this is the center'}));
+	         		that.data('win').bindTo('position',map,'center');
+	         	}
+	         	that.data('win').open(map);
+	         });
+	     	}
+
+		 		loadMap();
+
+	      if(is_has_old_map==1) {
+	      	google.maps.event.addDomListener(window, 'load', loadMap);
+	      }
+
+	      $('#find_location').click(function(e){
+	      	e.preventDefault();
+	      	map_loading.show();
+
+	      	var pos = {
+	      		lat: x,
+	      		lng: y
+	      	};
+	        // Try HTML5 geolocation.
+	        if (navigator.geolocation) {
+	        	navigator.geolocation.getCurrentPosition(function(position) {
+	        		pos = {
+	        			lat: position.coords.latitude,
+	        			lng: position.coords.longitude
+	        		};
+	        		map.setCenter(pos);
+	        		map.setZoom(12);
+	        		map_loading.hide();
+	        	}, function() {
+	        		map.setCenter(pos);
+	        		map.setZoom(12);
+	        		map_loading.hide();
+	        	});
+	        } else {
+	          // Browser doesn't support Geolocation
+	          map.setCenter(pos);
+	          map.setZoom(12);
+
+	          map_loading.hide();
+	      	}
+	      });
+	  });
+	</script>
+
+	<script>
+	  $(document).ready(function() {
+			jQuery.validator.addMethod("phone", function(value, element) {
+				if((value.charAt(0)==0 && value.charAt(1)!=0) || value.length==0 ){
+					return true;
+				}
+				return false;
+			}, "Invalid phone number.");
+	    // Validate
+	    $("#form-post").validate({	        
+	    	rules:
+	    	{
+	    		ad_headline:{required:true, maxlength:101},
+	    		ad_text:{required:true, maxlength:10000},
+	    		name:{required:true, minlength:3, maxlength:50},
+	    		'phone-1':{required:true, minlength:9, maxlength:10,number: true,phone:true},
+	    		'phone-2':{minlength:9, maxlength:10,number: true,phone:true},
+	    		'phone-3':{minlength:9, maxlength:10,number: true,phone:true},
+	    		ad_kindof:{required:true},
+	    	},
+	    	errorClass:"error invalid-feedback",			
+	    	highlight: function(label) {
+	    		$(label).addClass('error');
+	    		$(label).closest('.form-group').removeClass('has-success has-feedback').addClass('has-error has-feedback')
+	    		$(label).closest('.form-group').find('label.error').remove();
+	    		$(label).closest('.form-group input').after('<span class="glyphicon glyphicon-remove form-control-feedback" aria-hidden="true"></span><span id="inputError2Status" class="sr-only">(error)</span>');
+	    	},
+
+	    	success: function(label,element) {
+	    		$(label).removeClass('error');
+	    		$(element).removeClass('is-invalid');
+	    		$(label).closest('.form-group').removeClass('has-error has-feedback').addClass('has-success has-feedback');
+	    		$(label).closest('.form-group').find('label.error').remove();
+	    		label.after('<span class="glyphicon glyphicon-ok form-control-feedback" aria-hidden="true"></span><span id="inputSuccess2Status" class="sr-only">(success)</span>');
+	    		label.remove();
+	    		$('.has-success').find('.checkbox').css('margin-bottom','0');
+	    	},
+
+	    	errorPlacement: function(error, element) {
+	    		if(error.text()) {
+	    			element.addClass('is-invalid');
+	    			element.closest('.form-input').append(error);
+	    		}
+	    	},  
+			// focusInvalid: false,
+			invalidHandler: function(form, validator) {
+				if (!validator.numberOfInvalids())
+					return;
+
+				$('html, body').animate({
+					scrollTop: $(validator.errorList[0].element).offset().top
+				}, 700);
+			},
+			submitHandler: function(form) {
+					
+					$("#form-post input[type='submit']").attr('disabled','disabled').val('Saving...').css({"background-color": "#dedede", "border": "none" });
+					
+					$.post($("#form-post").attr('action'), $("#form-post").serialize(), function(data) {
+						if(data.status == 1 || data.status == '1') {
+							if(data.is_logged_in == 1 || data.is_logged_in == '1') {
+								window.location = 'https://www.khmer24.com/en/manage-ads.html'; 
+							} else {
+								$('#account-question').modal('show');
+								// $.fancybox('#account-question',{autoSize : true, width: '100%', height:'100%',padding:0, margin:0, modal:true });
+		              //  window.location = 'https://www.khmer24.com/en/register.html'; 
+		          }
+		      }else{
+		      	$("#form-post input[type='submit']").removeAttr('disabled').val('Submit').removeAttr('style');
+		      	alert(data.info);
+		      }
+		  },'json');
+				}
+			});		
+		});
+	</script>
 
 	<script type="text/javascript">
 		$(document).ready(function(){
@@ -853,37 +885,5 @@
 
 		});
 	</script>
-
-	<div class="modal fade" id="account-question" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="account-question-box">
-						<div class="title-head">
-							<div class="text">Please! register or login to publish your ad</div>
-							<div class="icon">
-							<span class="user-photo" style="background: url('https://www.khmer24.com/khmer24-reform21/template/img/default_profile.jpg') no-repeat center; background-size: cover;"></span>
-							</div>
-							<button class="btn btn-clear btn-close-modal"><span class="icon icon-cross"></span></button>
-						</div>
-						<div class="detail-box">
-							<div>
-								<div class="info">Already have an account?</div>
-								<a class="btn btn_blue btn-primary btn-md" href="https://www.khmer24.com/en/login">Log in</a>
-							</div>
-							<div class="devide">
-								<span>Or</span>
-							</div>
-							<div>
-								<div class="info">No account yet?</div>
-								<a class="btn btn-warning btn-yellow_dark btn-md" href="https://www.khmer24.com/en/register">Register</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-	</div>
-
-<a href="#totop" id="totop"><i class="icon-up"></i></a>
-
-
+	
 @endsection

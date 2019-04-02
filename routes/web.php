@@ -11,6 +11,9 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::get('product','Admin\ProductController@index')->name('product.index');
 Route::get('product/{category}/create','Admin\ProductController@create')->name('product.create');
 
+Route::get('post','FreePostController@index')->name('post.index');
+Route::get('post/{post_id}/create','FreePostController@create')->name('post.create');
+
 // Route::resource('admin/seo', 'AdminSeoController');
 //
 // // Routes for the menu admin
